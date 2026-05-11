@@ -1,53 +1,71 @@
-// src/components/About.tsx
-import workshopImg from '../assets/about-workshop.jpg';
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion } from 'framer-motion';
 
 export default function About() {
+  const root = useRef<HTMLElement>(null);
+  const headline = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const words = headline.current!.querySelectorAll<HTMLElement>('.about-word');
+      gsap.fromTo(
+        words,
+        { opacity: 0.15, y: 12 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.05,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: headline.current,
+            start: 'top 80%',
+            end: 'top 30%',
+            scrub: true,
+          },
+        },
+      );
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
+  const text =
+    'We are a finishing studio that lives at the seam between machine and craft. Our pressmen translate ideas into tactile, lasting things — built to be touched, opened, traded, and kept.';
+
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-brand-charcoal to-brand-dark">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Image on the left */}
-          <div className="order-2 lg:order-1">
-            <div className="relative h-96 lg:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src={workshopImg}
-                alt="Surya Post Press workshop"
-                className="absolute inset-0 w-full h-full object-cover"
-                loading="lazy"
-              />
-            </div>
-          </div>
-
-          {/* Content on the right */}
-          <div className="order-1 lg:order-2">
-            <div className="inline-block px-4 py-2 bg-brand-gold/10 border border-brand-gold/30 rounded-full text-brand-gold text-sm font-medium mb-6">
-              About Surya Post Press
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
-              Your Trusted Partner in
-              <span className="block text-brand-gold">Post-Printing Excellence</span>
-            </h2>
-
-            <div className="space-y-4 text-gray-300 font-body leading-relaxed mb-8">
-              <p>
-                Established in Kochi, Surya Post Press has been serving the printing community and local businesses
-                with dedication and precision for over 15 years. We understand that post-printing work is where
-                quality truly comes to life.
-              </p>
-              <p>
-                Our team of skilled craftsmen combines traditional expertise with modern technology to deliver
-                flawless finishing on every project. From small individual orders to large business contracts,
-                we treat every job with the same commitment to excellence.
-              </p>
-              <p>
-                As a proud Kochi-based business, we've built lasting relationships with print shops, offices,
-                educational institutions, and individuals throughout Kerala who trust us for reliable service
-                and competitive pricing.
-              </p>
-            </div>
-          </div>
+    <section id="about" ref={root} className="relative px-6 md:px-10 py-32 md:py-44">
+      <div className="mx-auto max-w-7xl grid grid-cols-12 gap-8 items-end">
+        <div className="col-span-12 md:col-span-5 flex flex-col gap-6">
+          <span className="text-xs font-mono uppercase tracking-[0.3em] text-sun">
+            01 — Studio
+          </span>
+          <p className="text-bone/60 text-sm md:text-base max-w-sm leading-relaxed">
+            Built around three principles: respect the substrate, respect the
+            artwork, and respect the time it takes to do either justice.
+          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.7 }}
+            className="mt-4 flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-bone/50"
+          >
+            <span className="inline-block h-px w-10 bg-sun" />
+            Surat, India
+          </motion.div>
         </div>
+
+        <h2
+          ref={headline}
+          className="col-span-12 md:col-span-7 font-display font-light text-3xl md:text-5xl leading-[1.2] text-balance"
+        >
+          {text.split(' ').map((w, i) => (
+            <span key={i} className="about-word inline-block mr-[0.32em]">
+              {w}
+            </span>
+          ))}
+        </h2>
       </div>
     </section>
   );

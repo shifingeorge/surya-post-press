@@ -1,69 +1,90 @@
-import { Phone, Mail, MapPin } from 'lucide-react';
-
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="bg-brand-charcoal text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <h3 className="text-2xl font-bold text-brand-gold mb-4">Surya Post Press</h3>
-            <p className="text-gray-300 font-body leading-relaxed">
-              Professional post-printing services in Kochi. Quality craftsmanship, reliable service, and competitive pricing for all your finishing needs.
+    <footer className="relative bg-ink border-t border-bone/10">
+      <div className="mx-auto max-w-7xl px-6 md:px-10 py-16">
+        <div className="grid grid-cols-12 gap-8">
+          <div className="col-span-12 md:col-span-5">
+            <div className="font-display text-5xl md:text-7xl leading-none">
+              Surya<span className="text-sun">.</span>
+            </div>
+            <p className="mt-5 max-w-sm text-sm text-bone/60">
+              Surya Post Press Solution — finishing studio for printers, agencies and
+              brands. Founded 2008. Surat, Gujarat.
             </p>
           </div>
 
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 font-body">
-              <li>
-                <a href="#services" className="text-gray-300 hover:text-brand-gold transition-colors">
-                  Our Services
-                </a>
-              </li>
-              <li>
-                <a href="#about" className="text-gray-300 hover:text-brand-gold transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#contact" className="text-gray-300 hover:text-brand-gold transition-colors">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
-            <ul className="space-y-3 font-body">
-              <li className="flex items-center gap-2 text-gray-300">
-                <Phone className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                <a href="tel:+918281054873" className="hover:text-brand-gold transition-colors">
-                  +918281054873
-                </a>
-              </li>
-              <li className="flex items-center gap-2 text-gray-300">
-                <Mail className="w-4 h-4 text-brand-gold flex-shrink-0" />
-                <a href="mailto:info@suryapostpress.com" className="hover:text-brand-gold transition-colors">
-                  info@suryapostpress.com
-                </a>
-              </li>
-              <li className="flex items-start gap-2 text-gray-300">
-                <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0 mt-1" />
-                <span>MG Road, Kochi, Kerala 682016</span>
-              </li>
-            </ul>
-          </div>
+          <FooterCol
+            title="Studio"
+            items={[
+              { label: 'Work', href: '#work' },
+              { label: 'Services', href: '#services' },
+              { label: 'Process', href: '#process' },
+              { label: 'About', href: '#about' },
+            ]}
+          />
+          <FooterCol
+            title="Connect"
+            items={[
+              { label: 'Email', href: 'mailto:hello@suryapostpress.in' },
+              { label: 'Instagram', href: '#' },
+              { label: 'LinkedIn', href: '#' },
+              { label: 'Behance', href: '#' },
+            ]}
+          />
+          <FooterCol
+            title="Visit"
+            items={[
+              { label: '42, Press Lane', href: '#' },
+              { label: 'Katargam, Surat', href: '#' },
+              { label: '395004 IN', href: '#' },
+            ]}
+          />
         </div>
 
-        <div className="border-t border-gray-700 pt-8 text-center">
-          <p className="text-gray-400 font-body text-sm">
-            {currentYear} Surya Post Press. All rights reserved. | Precision Post-Printing Services in Kochi, Kerala
-          </p>
+        <div className="mt-16 flex flex-col md:flex-row md:items-center justify-between gap-4 text-xs text-bone/40 border-t border-bone/10 pt-6">
+          <span>© {new Date().getFullYear()} Surya Post Press Solution. All rights reserved.</span>
+          <div className="flex gap-5">
+            <a href="#" className="hover:text-sun transition-colors">Privacy</a>
+            <a href="#" className="hover:text-sun transition-colors">Terms</a>
+            <a href="#" className="hover:text-sun transition-colors">Imprint</a>
+          </div>
+        </div>
+      </div>
+
+      {/* Big bg type */}
+      <div className="pointer-events-none select-none overflow-hidden">
+        <div className="font-display text-edge text-[26vw] leading-[0.78] tracking-tight whitespace-nowrap text-center -mb-[6vw]">
+          POST · PRESS
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: { label: string; href: string }[];
+}) {
+  return (
+    <div className="col-span-6 md:col-span-2">
+      <div className="text-[11px] uppercase tracking-[0.3em] text-bone/40 mb-4">
+        {title}
+      </div>
+      <ul className="flex flex-col gap-2">
+        {items.map((i) => (
+          <li key={i.label}>
+            <a
+              href={i.href}
+              className="text-sm text-bone/80 hover:text-sun transition-colors"
+            >
+              {i.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

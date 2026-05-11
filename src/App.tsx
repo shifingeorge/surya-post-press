@@ -1,26 +1,36 @@
+import { useLenis } from './hooks/useLenis';
+import Cursor from './components/Cursor';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Services from './components/Services';
+import Marquee from './components/Marquee';
 import About from './components/About';
-import Products from './components/Products';
-import Trust from './components/Trust';
+import Services from './components/Services';
+import Process from './components/Process';
+import Gallery from './components/Gallery';
+import Testimonials from './components/Testimonials';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import Preloader from './components/Preloader';
 
-function App() {
+export default function App() {
+  useLenis();
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="relative">
+      <Preloader />
+      <Cursor />
       <Navbar />
-      <main className="scroll-mt-24"></main>
-      <Hero />
-      <Services />
-      <Products />
-      <About />
-      <Trust />
-      <Contact />
+      <main>
+        <Hero />
+        <Marquee />
+        <About />
+        <Services />
+        <Process />
+        <Gallery />
+        <Testimonials />
+        <Contact />
+      </main>
       <Footer />
     </div>
   );
 }
-
-export default App;

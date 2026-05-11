@@ -1,120 +1,109 @@
-import { useEffect, useState } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { motion, useMotionValueEvent, useScroll } from 'framer-motion';
+import { useState } from 'react';
 
-const LINKS = [
-  { label: 'Home', href: '#home' },
+const links = [
+  { label: 'Work', href: '#work' },
   { label: 'Services', href: '#services' },
-  { label: 'Products', href: '#products' },
-  { label: 'About', href: '#about' },     // Make sure About.tsx has id="about"
-  { label: 'Why Us', href: '#trust' },     // Make sure Trust.tsx has id="trust"
+  { label: 'Process', href: '#process' },
+  { label: 'Studio', href: '#about' },
   { label: 'Contact', href: '#contact' },
-] as const;
+];
 
 export default function Navbar() {
+  const { scrollY } = useScroll();
+  const [shrunk, setShrunk] = useState(false);
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    onScroll();
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const linkBase =
-    'px-3 py-2 text-sm font-medium transition-colors rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40';
-
-  const linkClass = scrolled || open
-    ? 'text-brand-charcoal/80 hover:text-brand-charcoal'
-    : 'text-white/80 hover:text-white';
+  useMotionValueEvent(scrollY, 'change', (v) => setShrunk(v > 60));
 
   return (
-    <nav
-      className={[
-        'fixed inset-x-0 top-0 z-50',
-        scrolled || open
-          ? 'bg-white/80 backdrop-blur-md border-b border-black/5 shadow-sm'
-          : 'bg-transparent',
-      ].join(' ')}
-      aria-label="Primary"
+    <motion.header
+      initial={{ y: -80, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+      className="fixed top-0 left-0 right-0 z-50 px-6 md:px-10 py-5"
     >
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="h-16 flex items-center justify-between">
-          {/* Logo/Brand */}
-          <a
-            href="#home"
-            className={[
-              'text-lg font-extrabold tracking-tight',
-              scrolled || open ? 'text-brand-charcoal' : 'text-white',
-            ].join(' ')}
-          >
-            Surya Post Press
-          </a>
+      <motion.nav
+        animate={{
+          backgroundColor: shrunk ? 'rgba(10,10,10,0.72)' : 'rgba(10,10,10,0)',
+          backdropFilter: shrunk ? 'blur(14px)' : 'blur(0px)',
+          borderColor: shrunk ? 'rgba(243,239,230,0.08)' : 'rgba(243,239,230,0)',
+        }}
+        transition={{ duration: 0.4 }}
+        className="mx-auto max-w-7xl flex items-center justify-between rounded-full border px-5 md:px-7 py-3"
+      >
+        <a href="#top" className="flex items-center gap-2.5 group">
+          <span className="relative inline-flex h-7 w-7 items-center justify-center">
+            <span className="absolute inset-0 rounded-full bg-sun/90 group-hover:scale-110 transition-transform" />
+            <span className="relative h-2 w-2 rounded-full bg-ink" />
+          </span>
+          <span className="font-display text-[15px] tracking-tight">
+            Surya<span className="text-sun">.</span>
+          </span>
+        </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1">
-            {LINKS.map((item) => (
+        <ul className="hidden md:flex items-center gap-7 text-[13px] font-medium tracking-wide">
+          {links.map((l) => (
+            <li key={l.href}>
               <a
-                key={item.href}
-                href={item.href}
-                className={`${linkBase} ${linkClass}`}
-                onClick={() => setOpen(false)}
+                href={l.href}
+                className="relative inline-block text-bone/80 hover:text-bone transition-colors after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:h-px after:w-0 after:bg-sun hover:after:w-full after:transition-all after:duration-500"
               >
-                {item.label}
+                {l.label}
               </a>
-            ))}
+            </li>
+          ))}
+        </ul>
 
-            {/* CTA */}
+        <a
+          href="#contact"
+          className="hidden md:inline-flex items-center gap-2 rounded-full bg-bone text-ink px-4 py-2 text-[13px] font-semibold hover:bg-sun transition-colors"
+        >
+          Request Quote
+          <span aria-hidden>→</span>
+        </a>
+
+        <button
+          aria-label="Menu"
+          onClick={() => setOpen((o) => !o)}
+          className="md:hidden flex flex-col gap-1.5 px-2 py-2"
+        >
+          <span className={`h-px w-6 bg-bone transition-transform ${open ? 'translate-y-1.5 rotate-45' : ''}`} />
+          <span className={`h-px w-6 bg-bone transition-opacity ${open ? 'opacity-0' : ''}`} />
+          <span className={`h-px w-6 bg-bone transition-transform ${open ? '-translate-y-1.5 -rotate-45' : ''}`} />
+        </button>
+      </motion.nav>
+
+      {/* Mobile menu */}
+      <motion.div
+        initial={false}
+        animate={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.35 }}
+        className="md:hidden mx-auto max-w-7xl mt-3 overflow-hidden rounded-2xl border border-bone/10 bg-ink/80 backdrop-blur"
+      >
+        <ul className="flex flex-col p-4">
+          {links.map((l) => (
+            <li key={l.href}>
+              <a
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="block py-3 px-2 text-bone/80 hover:text-sun text-sm"
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
+          <li className="px-2 pt-2">
             <a
-              href="tel:+918281054873"
-              className="ml-3 inline-flex items-center gap-2 rounded-lg bg-brand-gold text-brand-dark px-4 py-2 text-sm font-semibold shadow-brand-lg transition-all hover:bg-yellow-500"
+              href="#contact"
+              onClick={() => setOpen(false)}
+              className="inline-flex w-full items-center justify-center rounded-full bg-bone text-ink px-4 py-2.5 text-sm font-semibold"
             >
-              <Phone className="h-4 w-4" />
-              Call Now
+              Request Quote
             </a>
-          </div>
-
-          {/* Mobile menu button */}
-          <button
-            className={[
-              'md:hidden inline-flex items-center justify-center rounded-md p-2 transition-colors',
-              scrolled || open
-                ? 'text-brand-charcoal hover:bg-black/5'
-                : 'text-white hover:bg-white/10',
-            ].join(' ')}
-            aria-label="Toggle menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
-
-        {/* Mobile menu */}
-        {open && (
-          <div className="md:hidden pb-4">
-            <div className="grid gap-1">
-              {LINKS.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-md px-3 py-2 text-base font-medium text-brand-charcoal hover:bg-black/5"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </a>
-              ))}
-              <a
-                href="tel:+918281054873"
-                className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-brand-gold text-brand-dark px-4 py-2 text-base font-semibold shadow-brand-lg transition-colors hover:bg-yellow-500"
-                onClick={() => setOpen(false)}
-              >
-                <Phone className="h-4 w-4" />
-                Call Now
-              </a>
-            </div>
-          </div>
-        )}
-      </div>
-    </nav>
+          </li>
+        </ul>
+      </motion.div>
+    </motion.header>
   );
 }

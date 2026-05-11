@@ -1,116 +1,231 @@
-import { Phone, MapPin, Clock, MessageSquare } from 'lucide-react';
+import { useState, FormEvent, useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function Contact() {
+  const root = useRef<HTMLElement>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    company: '',
+    brief: '',
+    service: 'Foil',
+  });
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const chars = root.current!.querySelectorAll<HTMLElement>('.contact-char');
+      gsap.fromTo(
+        chars,
+        { yPercent: 100, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.02,
+          ease: 'power4.out',
+          scrollTrigger: {
+            trigger: root.current,
+            start: 'top 70%',
+          },
+        },
+      );
+    }, root);
+    return () => ctx.revert();
+  }, []);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+  };
+
+  const headline = "Let's make something tactile.";
+
   return (
-    <section id="contact" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-charcoal mb-4">
-            Get In Touch
+    <section
+      id="contact"
+      ref={root}
+      className="relative bg-ink px-6 md:px-10 py-32 md:py-44 overflow-hidden"
+    >
+      <div className="mx-auto max-w-7xl grid grid-cols-12 gap-10">
+        <div className="col-span-12 md:col-span-7">
+          <span className="text-xs font-mono uppercase tracking-[0.3em] text-sun">
+            06 — Contact
+          </span>
+          <h2 className="mt-6 font-display text-5xl md:text-8xl leading-[1] tracking-tight">
+            {headline.split('').map((c, i) => (
+              <span key={i} className="word-mask align-baseline">
+                <span className="word-inner contact-char inline-block">
+                  {c === ' ' ? ' ' : c}
+                </span>
+              </span>
+            ))}
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto font-body">
-            Ready to start your project? Contact us today for a free consultation and quote.
-          </p>
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 max-w-xl">
+            <ContactBlock label="Studio" value={'42, Press Lane\nKatargam, Surat 395004'} />
+            <ContactBlock label="Hours" value={'Mon — Sat\n10:00 — 19:30 IST'} />
+            <ContactBlock label="Email" value="hello@suryapostpress.in" link="mailto:hello@suryapostpress.in" />
+            <ContactBlock label="Phone" value="+91 98257 00000" link="tel:+919825700000" />
+          </div>
         </div>
 
-        <div className="space-y-8 lg:space-y-10">
-          {/* Google Map (Top) */}
-<div className="relative rounded-2xl overflow-hidden h-80 sm:h-96 bg-gray-200">
-  {/* Embedded map (approximate query) */}
-  <iframe
-    className="absolute inset-0 w-full h-full border-0"
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d245.5808946913551!2d76.27713812311157!3d9.992529528635162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d5dd157df7b%3A0xe70ef53ead2fb408!2sKhadeeja%20Building%2C%2068%2F2007%2C%20Mathai%20Manjooran%20Rd%2C%20Ayyappankavu%2C%20Kochi%2C%20Ernakulam%2C%20Kerala%20682018!5e0!3m2!1sen!2sin!4v1759650537123!5m2!1sen!2sin"
-    loading="lazy"
-    referrerPolicy="no-referrer-when-downgrade"
-    allowFullScreen
-  />
+        <div className="col-span-12 md:col-span-5">
+          <form
+            onSubmit={onSubmit}
+            className="rounded-3xl border border-bone/10 bg-deep p-7 md:p-8 flex flex-col gap-5"
+          >
+            {!submitted ? (
+              <>
+                <div className="text-xs uppercase tracking-[0.3em] text-bone/50">
+                  Brief us
+                </div>
+                <Field
+                  label="Your name"
+                  value={form.name}
+                  onChange={(v) => setForm({ ...form, name: v })}
+                  required
+                />
+                <Field
+                  label="Email"
+                  type="email"
+                  value={form.email}
+                  onChange={(v) => setForm({ ...form, email: v })}
+                  required
+                />
+                <Field
+                  label="Company / Press"
+                  value={form.company}
+                  onChange={(v) => setForm({ ...form, company: v })}
+                />
 
-  {/* Button to open your exact pin in Google Maps */}
-  <a
-    href="https://maps.app.goo.gl/ykEFo6fm9gQGZmyV6"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="absolute bottom-3 right-3 z-10 inline-flex items-center gap-2 rounded-lg bg-white/90 px-3 py-2 text-xs font-medium text-brand-charcoal shadow hover:bg-white"
-  >
-    <MapPin className="w-4 h-4 text-brand-gold" />
-    View on Google Maps
-  </a>
-</div>
-
-          {/* Contact Information (Below Map) */}
-          <div className="bg-gradient-to-br from-brand-charcoal to-brand-dark rounded-2xl p-8 md:p-10 text-white">
-            <h3 className="text-2xl font-bold mb-8">Contact Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Phone */}
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-gold/10 rounded-lg flex items-center justify-center">
-                  <Phone className="w-6 h-6 text-brand-gold" />
-                </div>
-                <div>
-                  <div className="font-semibold mb-1">Phone</div>
-                  <a
-                    href="tel:+918281054873"
-                    className="text-gray-300 hover:text-brand-gold transition-colors font-body"
-                  >
-                    +918281054873
-                  </a>
-                </div>
-              </div>
-
-              {/* Address */}
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-gold/10 rounded-lg flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-brand-gold" />
-                </div>
-                <div>
-                  <div className="font-semibold mb-1">Address</div>
-                  <p className="text-gray-300 font-body">
-                    Surya Post Press
-                    <br />
-                    MG Road, Kochi
-                    <br />
-                    Kerala 682016, India
-                  </p>
-                </div>
-              </div>
-
-              {/* Business Hours */}
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-brand-gold/10 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-brand-gold" />
-                </div>
-                <div>
-                  <div className="font-semibold mb-1">Business Hours</div>
-                  <div className="text-gray-300 font-body space-y-1">
-                    <div>Monday - Saturday: 9:00 AM - 6:00 PM</div>
-                    <div>Sunday: Closed</div>
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] uppercase tracking-[0.25em] text-bone/50">
+                    Service of interest
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    {['Foil', 'Emboss', 'Die-cut', 'UV', 'Bind'].map((s) => (
+                      <button
+                        type="button"
+                        key={s}
+                        onClick={() => setForm({ ...form, service: s })}
+                        className={`rounded-full border px-3.5 py-1.5 text-xs transition ${
+                          form.service === s
+                            ? 'bg-sun text-ink border-sun'
+                            : 'border-bone/20 text-bone/70 hover:border-bone/40'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Centered Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <a
-              href="tel:+918281054873"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 bg-brand-gold text-brand-dark font-semibold rounded-lg hover:bg-yellow-500 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              <Phone className="w-5 h-5 mr-2" />
-              Call Now
-            </a>
-            <a
-              href="https://wa.me/918281054873"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-4 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg"
-            >
-              <MessageSquare className="w-5 h-5 mr-2" />
-              WhatsApp Us
-            </a>
-          </div>
+                <Field
+                  label="Tell us about your project"
+                  value={form.brief}
+                  onChange={(v) => setForm({ ...form, brief: v })}
+                  textarea
+                />
+
+                <button
+                  type="submit"
+                  className="mt-2 group inline-flex items-center justify-center gap-3 rounded-full bg-bone text-ink px-6 py-4 text-sm font-semibold hover:bg-sun transition-colors"
+                  data-cursor-hover
+                >
+                  Send brief
+                  <span className="transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-col gap-4 py-8 text-center">
+                <div className="font-display text-3xl">Thank you, {form.name || 'friend'}.</div>
+                <p className="text-bone/60 text-sm">
+                  We&rsquo;ll respond within one working day with a route, a sample
+                  proposal and a rough timeline.
+                </p>
+                <div className="mt-4 inline-flex items-center justify-center gap-2 text-xs uppercase tracking-[0.25em] text-sun">
+                  <span className="h-1.5 w-1.5 rounded-full bg-sun animate-shimmer" />
+                  Brief received
+                </div>
+              </div>
+            )}
+          </form>
         </div>
       </div>
     </section>
+  );
+}
+
+function ContactBlock({
+  label,
+  value,
+  link,
+}: {
+  label: string;
+  value: string;
+  link?: string;
+}) {
+  const inner = (
+    <div className="flex flex-col gap-2">
+      <span className="text-[11px] uppercase tracking-[0.3em] text-bone/40">
+        {label}
+      </span>
+      <span className="font-display text-lg text-bone whitespace-pre-line leading-snug">
+        {value}
+      </span>
+    </div>
+  );
+  return link ? (
+    <a href={link} className="hover:text-sun transition-colors" data-cursor-hover>
+      {inner}
+    </a>
+  ) : (
+    inner
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  required,
+  textarea,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  required?: boolean;
+  textarea?: boolean;
+}) {
+  return (
+    <label className="flex flex-col gap-2">
+      <span className="text-[11px] uppercase tracking-[0.25em] text-bone/50">
+        {label}
+        {required && <span className="text-sun"> *</span>}
+      </span>
+      {textarea ? (
+        <textarea
+          required={required}
+          rows={4}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="rounded-xl border border-bone/15 bg-ink/60 px-4 py-3 text-sm focus:border-sun focus:outline-none transition resize-none"
+        />
+      ) : (
+        <input
+          type={type}
+          required={required}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="rounded-xl border border-bone/15 bg-ink/60 px-4 py-3 text-sm focus:border-sun focus:outline-none transition"
+        />
+      )}
+    </label>
   );
 }
